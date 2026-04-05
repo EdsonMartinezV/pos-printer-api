@@ -30,7 +30,7 @@ class PrintersController extends Controller
             /* Printer setup */
             /* $profile = CapabilityProfile::load('SP2000'); */
             $profile = CapabilityProfile::load('simple');
-            $connector = new WindowsPrintConnector('smb://computer/printer');
+            $connector = new WindowsPrintConnector(_env('PRINTER_NAME', 'printer'));
             $printer = new Printer($connector, $profile);
 
             /* PRINT */
@@ -48,7 +48,7 @@ class PrintersController extends Controller
                 $name = trim(strlen($item['name']) > 20 ? substr($item['name'] ?? '', 0, 20) : $item['name'] ?? ''); // Clipped product name (max 20 chars)
                 $unitPrice = $item['unitPrice'] ?? '';
                 $total = $item['total'] ?? '';
-                
+
                 // Format: "qty  product_name  unit_price  total"
                 $line = sprintf("%-4s %-20s %8s %10s", $qty, $name, $unitPrice, $total);
                 $printer->text($line . "\n");
@@ -77,7 +77,14 @@ class PrintersController extends Controller
         }
 
         response()->json([
-            'message' => 'Listo!'
+            'message' => 'Listo!',
+            'data' => $validatedData
+        ]);
+    }
+
+    public function getPrinterName() {
+        response()->json([
+            'printerName' => _env('PRINTER_NAME', 'printer')
         ]);
     }
 }
