@@ -43,6 +43,8 @@ class PrintersController extends Controller
 
             /* Articles */
             $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $titleLine = sprintf("%-4s %-23s %15s", 'Cant', 'Descripcion', 'Subtotal');
+            $printer->text($titleLine . "\n");
             foreach ($validatedData['articles'] as $item) {
                 $qty = $item['quantity'] ?? '';
                 $name = trim(strlen($item['name']) > 20 ? substr($item['name'] ?? '', 0, 20) : $item['name'] ?? ''); // Clipped product name (max 20 chars)
@@ -50,8 +52,10 @@ class PrintersController extends Controller
                 $total = $item['total'] ?? '';
 
                 // Format: "qty  product_name  unit_price  total"
-                $line = sprintf("%-4s %-20s %8s %10s", $qty, $name, $unitPrice, $total);
+                $line = sprintf("%-4s %-23s %15s", $qty, $name, $total);
                 $printer->text($line . "\n");
+                $line2 = sprintf("%-4s %-23s", $item['measureUnit'], $unitPrice);
+                $printer->text($line2 . "\n");
             }
 
             /* Totals */
@@ -106,6 +110,8 @@ class PrintersController extends Controller
             }
 
             /* Articles */
+            $titleLine = sprintf("%-4s %-23s %15s", 'Cant', 'Descripcion', 'Subtotal');
+            $printObject['articles'][] = $titleLine;
             foreach ($validatedData['articles'] as $item) {
                 $qty = $item['quantity'] ?? '';
                 $name = trim(strlen($item['name']) > 20 ? substr($item['name'] ?? '', 0, 20) : $item['name'] ?? ''); // Clipped product name (max 20 chars)
@@ -113,8 +119,10 @@ class PrintersController extends Controller
                 $total = $item['total'] ?? '';
 
                 // Format: "qty  product_name  unit_price  total"
-                $line = sprintf("%-4s %-20s %8s %10s", $qty, $name, $unitPrice, $total);
+                $line = sprintf("%-4s %-23s %15s", $qty, $name, $total);
                 $printObject['articles'][] = $line;
+                $line2 = sprintf("%-4s %-23s", $item['measureUnit'], $unitPrice);
+                $printObject['articles'][] = $line2;
             }
 
             /* Totals */
